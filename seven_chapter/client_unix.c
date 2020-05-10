@@ -1,9 +1,11 @@
+/*
+	2020-05-10 º¼ÖÝ  client
+*/
+
 #include <sys/socket.h>
 #include <sys/un.h>
 #include <stdio.h>
 #include <string.h>
-
-
 
 #define MYSOCK_ADDR "./un_socket"
 

@@ -1,3 +1,7 @@
+/*
+	2020-05-10 º¼ÖÝ
+*/
+
 #include <sys/socket.h>
 #include <sys/un.h>
 #include <stdlib.h>
