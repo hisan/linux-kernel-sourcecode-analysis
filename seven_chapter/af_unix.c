@@ -1,7 +1,6 @@
 /*
 	2020-05-10 º¼ÖÝ
 */
-
 #include <sys/socket.h>
 #include <sys/un.h>
 #include <stdlib.h>
@@ -15,6 +14,7 @@
 
 #define MYSOCK_ADDR "./un_socket"
 #define LISTEN_QUEUE 100
+#define BUFFER_MAX_S 1024
 
 int delete_socket(const char *deststring)
 {
@@ -43,7 +43,8 @@ int main()
 	struct sockaddr_un servaddr,client_addr;
 	socklen_t socklen;
 	int socksize = sizeof(struct sockaddr_un);	
-	
+	char buffer[BUFFER_MAX_S] = {0};
+	int rdlen = 0;
 	sockfd = socket(AF_UNIX,SOCK_STREAM,0);
 	if (!sockfd)
 	{
@@ -87,6 +88,8 @@ int main()
 			printf("connect receive:[%s]!\r\n",client_addr.sun_path);
 		}
 		/* handle the receive things */
+		rdlen = read(ret,buffer,BUFFER_MAX_S);
+		printf("[read:%d]: %s",rdlen,buffer);
 	}
 	
 	return 0;

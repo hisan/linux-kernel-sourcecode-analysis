@@ -6,8 +6,10 @@
 #include <sys/un.h>
 #include <stdio.h>
 #include <string.h>
+#include <unistd.h>
 
 #define MYSOCK_ADDR "./un_socket"
+#define BUFFER_MAX 1024 
 
 int main()
 {
@@ -15,6 +17,8 @@ int main()
 	int addrsize;
 	struct sockaddr_un servaddr,clientaddr;
 	int ret;
+	char buffer[BUFFER_MAX] = {0};
+	int wrlen = 0,left = 0;
 	
 	sockfd = socket(AF_UNIX,SOCK_STREAM,0);
 	if (sockfd == -1)
@@ -25,17 +29,6 @@ int main()
 	
 	addrsize = sizeof(struct sockaddr_un);
 	
-	memset(&clientaddr,0,addrsize);
-	clientaddr.sun_family = AF_UNIX;
-	strncpy(clientaddr.sun_path,MYSOCK_ADDR,sizeof(clientaddr.sun_path) -1);
-	
-	if (bind(sockfd,(struct sockaddr *)&clientaddr,addrsize) == -1)
-	{
-		printf("bind socket failed!\r\n");
-		return 0;
-	}
-	
-	
 	memset(&servaddr,0,addrsize);
 	servaddr.sun_family = AF_UNIX;
 	strncpy(servaddr.sun_path,MYSOCK_ADDR,sizeof(servaddr.sun_path) -1);
@@ -45,6 +38,17 @@ int main()
 	{
 		printf("connect server:[%s] ret:[%d] failed!\r\n",MYSOCK_ADDR,ret);
 		return 0;
+	}
+	
+	strncpy(buffer,"this is client!\r\n",strlen("this is client!\r\n"));
+	
+	wrlen = write(sockfd,buffer+wrlen,strlen(buffer+wrlen));
+	left  = strlen(buffer) - wrlen;
+	
+	while (left)
+	{
+		wrlen += write(sockfd,buffer+wrlen,strlen(buffer+wrlen));
+		left  = strlen(buffer) - wrlen;
 	}
 	
 	return 0;
